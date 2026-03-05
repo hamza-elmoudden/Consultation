@@ -79,14 +79,8 @@ const SkincareAI = () => {
   useEffect(scrollToBottom, [messages]);
 
   useEffect(() => {
-    const storedUserId = window.localStorage.getItem('skincare_user_id');
-    if (storedUserId) {
-      setUserId(storedUserId);
-    } else {
-      const newUserId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-      window.localStorage.setItem('skincare_user_id', newUserId);
-      setUserId(newUserId);
-    }
+    const storedUserId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    setUserId(storedUserId);
   }, []);
 
   useEffect(() => {
@@ -191,18 +185,17 @@ const SkincareAI = () => {
 
       abortControllerRef.current = new AbortController();
 
-      const response = await fetch('http://localhost:3000/ai/chat?userId=' + encodeURIComponent(userId), {
+      const response = await fetch('https://ai-safaa.vercel.app/ai/chat?userId=' + encodeURIComponent(userId), {
         method: 'POST',
         body: formData,
         signal: abortControllerRef.current.signal
       });
 
       if (!response.ok) {
-        console.log(response)
+        console.log(response);
         throw new Error('HTTP error! status: ' + response.status);
       }
 
-      const aiMessageIndex = messages.length + 1;
       setMessages(prev => [...prev, {
         type: 'ai',
         text: '',
@@ -272,10 +265,10 @@ const SkincareAI = () => {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-rose-50 via-white to-pink-50">
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 flex flex-col">
       {showCamera && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-2xl w-full">
+        <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-2 sm:p-4">
+          <div className="bg-white rounded-2xl p-4 sm:p-6 max-w-2xl w-full">
             <div className="relative">
               <video 
                 ref={videoRef} 
@@ -286,16 +279,16 @@ const SkincareAI = () => {
               <canvas ref={canvasRef} className="hidden" />
             </div>
             
-            <div className="flex gap-3 mt-4">
+            <div className="flex gap-2 sm:gap-3 mt-4">
               <button
                 onClick={captureImage}
-                className="flex-1 py-3 bg-linear-to-r from-rose-500 to-pink-600 text-white rounded-xl font-medium hover:from-rose-600 hover:to-pink-700 transition-all"
+                className="flex-1 py-2.5 sm:py-3 bg-gradient-to-r from-rose-500 to-pink-600 text-white rounded-xl font-medium hover:from-rose-600 hover:to-pink-700 transition-all text-sm sm:text-base"
               >
                 {t.capture}
               </button>
               <button
                 onClick={closeCamera}
-                className="flex-1 py-3 bg-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-300 transition-all"
+                className="flex-1 py-2.5 sm:py-3 bg-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-300 transition-all text-sm sm:text-base"
               >
                 {t.cancel}
               </button>
@@ -304,23 +297,23 @@ const SkincareAI = () => {
         </div>
       )}
 
-      <div className="bg-white shadow-sm border-b border-rose-100">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-linear-to-br from-rose-400 to-pink-500 rounded-full flex items-center justify-center">
-              <Sparkles className="w-6 h-6 text-white" />
+      <div className="bg-white shadow-sm border-b border-rose-100 shrink-0">
+        <div className="max-w-4xl mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 mr-2">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-rose-400 to-pink-500 rounded-full flex items-center justify-center shrink-0">
+              <Sparkles className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
             </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-800">{t.title}</h1>
-              <p className="text-sm text-gray-500">{t.subtitle}</p>
+            <div className="min-w-0 flex-1">
+              <h1 className="text-base sm:text-xl font-bold text-gray-800 truncate">{t.title}</h1>
+              <p className="text-xs sm:text-sm text-gray-500 truncate">{t.subtitle}</p>
             </div>
           </div>
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
-              className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose-300"
+              className="px-2 sm:px-3 py-1.5 sm:py-2 border border-gray-200 rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-rose-300"
               disabled={isLoading || isStreaming}
             >
               <option value="ar">العربية</option>
@@ -330,37 +323,37 @@ const SkincareAI = () => {
             
             <button
               onClick={resetChat}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-lg transition-colors"
               title={t.reset}
               disabled={isLoading || isStreaming}
             >
-              <RefreshCw className="w-5 h-5 text-gray-600" />
+              <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
             </button>
           </div>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-6">
-        <div className="bg-white rounded-2xl shadow-lg border border-rose-100 overflow-hidden" style={{ height: '70vh' }}>
-          <div className="h-full overflow-y-auto p-6 space-y-4">
+      <div className="flex-1 max-w-4xl mx-auto w-full px-2 sm:px-4 py-3 sm:py-6 flex flex-col min-h-0">
+        <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-rose-100 overflow-hidden flex-1 flex flex-col min-h-0">
+          <div className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-3 sm:space-y-4">
             {messages.length === 0 && (
               <div className="flex items-center justify-center h-full">
-                <div className="text-center max-w-md">
-                  <div className="w-20 h-20 bg-linear-to-br from-rose-400 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Sparkles className="w-10 h-10 text-white" />
+                <div className="text-center max-w-md px-4">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-rose-400 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                    <Sparkles className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
                   </div>
-                  <p className="text-gray-600 leading-relaxed">{t.welcome}</p>
+                  <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{t.welcome}</p>
                 </div>
               </div>
             )}
 
             {messages.map((msg, idx) => (
               <div key={idx} className={'flex ' + (msg.type === 'user' ? 'justify-end' : 'justify-start')}>
-                <div className={'max-w-lg rounded-2xl p-4 shadow-sm ' + (msg.type === 'user' ? 'bg-linear-to-br from-rose-500 to-pink-600 text-white' : 'bg-gray-100 text-gray-800')}>
+                <div className={'max-w-[85%] sm:max-w-lg rounded-2xl p-3 sm:p-4 shadow-sm ' + (msg.type === 'user' ? 'bg-gradient-to-br from-rose-500 to-pink-600 text-white' : 'bg-gray-100 text-gray-800')}>
                   {msg.image && (
-                    <img src={msg.image} alt="Uploaded" className="rounded-lg mb-2 max-w-xs" />
+                    <img src={msg.image} alt="Uploaded" className="rounded-lg mb-2 max-w-full sm:max-w-xs" />
                   )}
-                  <p className="whitespace-pre-wrap leading-relaxed">
+                  <p className="whitespace-pre-wrap leading-relaxed text-sm sm:text-base">
                     {msg.text}
                     {msg.type === 'ai' && idx === messages.length - 1 && isStreaming && (
                       <span className="inline-block w-2 h-4 bg-gray-600 ml-1 animate-pulse"></span>
@@ -372,10 +365,10 @@ const SkincareAI = () => {
 
             {isLoading && !isStreaming && (
               <div className="flex justify-start">
-                <div className="bg-gray-100 rounded-2xl p-4 shadow-sm">
+                <div className="bg-gray-100 rounded-2xl p-3 sm:p-4 shadow-sm">
                   <div className="flex items-center gap-2">
-                    <Loader2 className="w-5 h-5 animate-spin text-rose-500" />
-                    <span className="text-gray-600">{t.analyzing}</span>
+                    <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin text-rose-500" />
+                    <span className="text-sm sm:text-base text-gray-600">{t.analyzing}</span>
                   </div>
                 </div>
               </div>
@@ -385,26 +378,26 @@ const SkincareAI = () => {
           </div>
         </div>
 
-        <div className="mt-4">
-          <div className="bg-white rounded-2xl shadow-lg border border-rose-100 p-4">
+        <div className="mt-3 sm:mt-4 shrink-0">
+          <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-rose-100 p-3 sm:p-4">
             {imagePreview && (
-              <div className="mb-3 relative inline-block">
-                <img src={imagePreview} alt="Preview" className="h-20 rounded-lg" />
+              <div className="mb-2 sm:mb-3 relative inline-block">
+                <img src={imagePreview} alt="Preview" className="h-16 sm:h-20 rounded-lg" />
                 <button
                   type="button"
                   onClick={() => {
                     setSelectedImage(null);
                     setImagePreview(null);
                   }}
-                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600"
+                  className="absolute -top-1.5 -right-1.5 sm:-top-2 sm:-right-2 bg-red-500 text-white rounded-full w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center text-sm hover:bg-red-600"
                   disabled={isLoading || isStreaming}
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-3 h-3 sm:w-4 sm:h-4" />
                 </button>
               </div>
             )}
             
-            <div className="flex items-end gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-1 ">
               <input
                 ref={fileInputRef}
                 type="file"
@@ -413,36 +406,36 @@ const SkincareAI = () => {
                 className="hidden"
               />
               
-              <button
+              {/* <button
                 onClick={openCamera}
                 disabled={isLoading || isStreaming}
-                className="p-3 bg-linear-to-br from-blue-400 to-blue-500 text-white rounded-xl hover:from-blue-500 hover:to-blue-600 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-2 sm:p-3 bg-gradient-to-br from-blue-400 to-blue-500 text-white rounded-lg sm:rounded-xl hover:from-blue-500 hover:to-blue-600 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 title={t.takePicture}
               >
-                <Camera className="w-5 h-5" />
-              </button>
+                <Camera className="w-4 h-4 sm:w-5 sm:h-5" />
+              </button> */}
 
               <button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isLoading || isStreaming}
-                className="p-3 bg-linear-to-br from-rose-400 to-pink-500 text-white rounded-xl hover:from-rose-500 hover:to-pink-600 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-2 sm:p-3 bg-gradient-to-br from-rose-400 to-pink-500 text-white rounded-lg sm:rounded-xl hover:from-rose-500 hover:to-pink-600 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 title={t.uploadImage}
               >
-                <Upload className="w-5 h-5" />
+                <Upload className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
 
               {isStreaming ? (
-                <div className="flex-1 px-4 py-3 border border-rose-300 bg-rose-50 rounded-xl flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Loader2 className="w-4 h-4 animate-spin text-rose-500" />
-                    <span className="text-rose-700 font-medium">{t.streaming}</span>
+                <div className="flex-1 px-3 sm:px-4 py-2 sm:py-3 border border-rose-300 bg-rose-50 rounded-lg sm:rounded-xl flex items-center justify-between">
+                  <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+                    <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 animate-spin text-rose-500 shrink-0" />
+                    <span className="text-rose-700 font-medium text-xs sm:text-sm truncate">{t.streaming}</span>
                   </div>
                   <button
                     onClick={stopStreaming}
-                    className="flex items-center gap-1 px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm font-medium"
+                    className="flex items-center gap-1 px-2 sm:px-3 py-1 bg-red-500 text-white rounded-md sm:rounded-lg hover:bg-red-600 transition-colors text-xs sm:text-sm font-medium ml-2 shrink-0"
                   >
-                    <StopCircle className="w-4 h-4" />
-                    {t.stopStream}
+                    <StopCircle className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span className="hidden sm:inline">{t.stopStream}</span>
                   </button>
                 </div>
               ) : (
@@ -457,7 +450,7 @@ const SkincareAI = () => {
                     }
                   }}
                   placeholder={isLoading ? t.analyzing : t.placeholder}
-                  className="flex-1 px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-300 disabled:bg-gray-50 disabled:text-gray-500"
+                  className="flex-1 px-3 sm:px-4 py-2 sm:py-3 border border-gray-200 rounded-lg sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-300 disabled:bg-gray-50 disabled:text-gray-500 text-sm sm:text-base"
                   dir={language === 'ar' ? 'rtl' : 'ltr'}
                   disabled={isLoading}
                 />
@@ -466,12 +459,12 @@ const SkincareAI = () => {
               <button
                 onClick={handleSubmit}
                 disabled={isLoading || isStreaming || (!inputText.trim() && !selectedImage)}
-                className="p-3 bg-linear-to-br from-rose-500 to-pink-600 text-white rounded-xl hover:from-rose-600 hover:to-pink-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                className="p-2 sm:p-3 bg-gradient-to-br from-rose-500 to-pink-600 text-white rounded-lg sm:rounded-xl hover:from-rose-600 hover:to-pink-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
               >
                 {isLoading && !isStreaming ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
                 ) : (
-                  <Send className="w-5 h-5" />
+                  <Send className="w-4 h-4 sm:w-5 sm:h-5" />
                 )}
               </button>
             </div>
